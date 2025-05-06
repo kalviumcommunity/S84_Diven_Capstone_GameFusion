@@ -1,4 +1,5 @@
 const Game = require('../models/Game');
+const mongoose = require('mongoose');
 
 // @desc    Get all games
 // @route   GET /api/games
@@ -147,7 +148,10 @@ exports.updateGame = async (req, res) => {
 // @access  Private
 exports.deleteGame = async (req, res) => {
   try {
-    const game = await Game.findById(req.params.id);
+    console.log('Delete game - Request params:', req.params);
+    const gameId = req.params.id;
+    
+    const game = await Game.findById(gameId);
     
     if (!game) {
       return res.status(404).json({
@@ -156,12 +160,65 @@ exports.deleteGame = async (req, res) => {
       });
     }
     
-    await game.deleteOne();
+    // Get the related data
+    const User = require('../models/User');
+    const Review = require('../models/Review');
     
-    res.status(200).json({
-      success: true,
-      data: {}
-    });
+    // Start a session for transaction-like operations
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    
+    try {
+      // 1. Delete all reviews associated with this game
+      const reviews = await Review.find({ game: gameId });
+      
+      for (const review of reviews) {
+        // Remove the review from the user's reviews array
+        await User.findByIdAndUpdate(
+          review.user,
+          { $pull: { reviews: review._id } },
+          { session }
+        );
+        
+        // Delete the review
+        await Review.findByIdAndDelete(review._id, { session });
+      }
+      
+      // 2. Remove game from users' favoriteGames arrays
+      await User.updateMany(
+        { favoriteGames: gameId },
+        { $pull: { favoriteGames: gameId } },
+        { session }
+      );
+      
+      // 3. Remove game from users' publishedGames arrays
+      if (game.created_by) {
+        await User.findByIdAndUpdate(
+          game.created_by,
+          { $pull: { publishedGames: gameId } },
+          { session }
+        );
+      }
+      
+      // 4. Finally delete the game
+      await Game.findByIdAndDelete(gameId, { session });
+      
+      // Commit the transaction
+      await session.commitTransaction();
+      
+      res.status(200).json({
+        success: true,
+        message: 'Game and related data deleted successfully',
+        data: {}
+      });
+    } catch (error) {
+      // If an error occurred, abort the transaction
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      // End the session
+      session.endSession();
+    }
   } catch (error) {
     console.error('Error in deleteGame:', error);
     

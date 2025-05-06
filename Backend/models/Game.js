@@ -68,9 +68,21 @@ const gameSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true
-  }
+  },
+  // Relationships
+  reviews: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Review'
+  }],
+  // Track users who favorited this game
+  favoritedBy: [{
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  }]
 }, {
-  timestamps: true
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
 });
 
 // Add an index for faster querying
@@ -81,11 +93,30 @@ gameSchema.virtual('url').get(function() {
   return `/games/${this._id}`;
 });
 
-// Method to check if a game is on sale (example instance method)
+// Virtual for average rating
+gameSchema.virtual('averageRating').get(function() {
+  if (this.reviews && this.reviews.length > 0) {
+    const totalRating = this.reviews.reduce((sum, review) => {
+      return sum + (review.rating || 0);
+    }, 0);
+    return totalRating / this.reviews.length;
+  }
+  return this.rating || 0;
+});
+
+// Method to check if a game is on sale
 gameSchema.methods.isOnSale = function() {
-  // Logic to determine if game is on sale
-  return this.price < 20; // Example condition
+  return this.price < 20;
 };
+
+// Pre middleware to populate reviews when finding a game
+gameSchema.pre(/^find/, function(next) {
+  this.populate({
+    path: 'reviews',
+    select: 'rating title content user'
+  });
+  next();
+});
 
 const Game = mongoose.model('Game', gameSchema);
 
