@@ -54,6 +54,14 @@ const userSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Game'
   }],
+  publishedGames: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Game'
+  }],
+  reviews: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Review'
+  }],
   isActive: {
     type: Boolean,
     default: true
@@ -72,7 +80,9 @@ const userSchema = new Schema({
     default: Date.now
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true }
 });
 
 // Create a full name virtual property
@@ -86,6 +96,41 @@ userSchema.virtual('fullName').get(function() {
 userSchema.methods.isAdmin = function() {
   return this.role === 'admin';
 };
+
+// Method for adding a game to favorites
+userSchema.methods.addGameToFavorites = async function(gameId) {
+  if (!this.favoriteGames.includes(gameId)) {
+    this.favoriteGames.push(gameId);
+    await this.save();
+    
+    // Update the game's favoritedBy field
+    await mongoose.model('Game').findByIdAndUpdate(
+      gameId,
+      { $addToSet: { favoritedBy: this._id } }
+    );
+  }
+  return this;
+};
+
+// Method for removing a game from favorites
+userSchema.methods.removeGameFromFavorites = async function(gameId) {
+  if (this.favoriteGames.includes(gameId)) {
+    this.favoriteGames = this.favoriteGames.filter(id => !id.equals(gameId));
+    await this.save();
+    
+    // Update the game's favoritedBy field
+    await mongoose.model('Game').findByIdAndUpdate(
+      gameId,
+      { $pull: { favoritedBy: this._id } }
+    );
+  }
+  return this;
+};
+
+// Pre-save hook to update publishedGames when a user creates a game
+userSchema.pre('save', async function(next) {
+  next();
+});
 
 // Pre-save hook to check for duplicate emails
 userSchema.pre('save', async function(next) {
