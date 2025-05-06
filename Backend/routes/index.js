@@ -16,4 +16,18 @@ router.get('/users', (req, res) => {
   ]);
 });
 
+
+router.post('/users', (req, res) => {
+  const newUser = req.body;
+  
+  
+  res.status(201).json({
+    message: 'User created successfully',
+    user: {
+      id: Date.now(), 
+      ...newUser
+    }
+  });
+});
+
 module.exports = router; 
