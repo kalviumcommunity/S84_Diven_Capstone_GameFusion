@@ -17,6 +17,7 @@ html, body, #root {
   justify-content: center;
   align-items: center;
   text-align: center;
+  background-color: #000; /* Fallback color */
 }
 
 /* Video background styling */
@@ -27,7 +28,7 @@ html, body, #root {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  z-index: -1;
+  z-index: 0;
   filter: brightness(0.7); /* dims video a little for better text visibility */
 }
 
