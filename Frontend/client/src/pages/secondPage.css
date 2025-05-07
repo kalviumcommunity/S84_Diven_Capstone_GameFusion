@@ -1,3 +1,16 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body.light {
+  background-color: #ffffff;
+}
+
+body.dark {
+  background-color: #1a1a1a;
+}
+
 .nav-bar {
   width: 1700px;
   height: 75px;
@@ -28,9 +41,16 @@
   margin-top: 35px;
   width: 35px;
   height: 35px;
-  color: rgb(254, 255, 255);
   cursor: pointer;
   transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.profile-icon.light {
+  color: #333333;
+}
+
+.profile-icon.dark {
+  color: #ffffff;
 }
 
 .profile-icon:hover {
@@ -41,15 +61,24 @@
   margin-left: 575px;
   margin-top: 25px;
   font-size: 3rem;
-  background: linear-gradient(to bottom right, #0000ff, #da0fda);
   font-family: 'Kyiv*Type Serif', serif;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+}
+
+.logo.light {
+  background-color: #ffffff;
+}
+
+.logo.dark {
+  background-color: #1a1a1a;
 }
 
 .logo span {
-  color: white;
+  background: linear-gradient(to bottom right, #0000ff, #da0fda);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  display: inline-block;
 }
 
 .image-1 {
@@ -67,16 +96,33 @@
   margin: 2rem auto;
   max-width: 700px;
   padding: 0.5rem 1rem;
-  background-color: #1a1a1a;
   border-radius: 12px;
+}
+
+.search-bar-container.light {
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar-container.dark {
+  background-color: #1a1a1a;
 }
 
 .search-icon,
 .mic-icon {
   display: flex;
   align-items: center;
-  color: white;
   cursor: pointer;
+}
+
+.search-icon.light,
+.mic-icon.light {
+  color: #333333;
+}
+
+.search-icon.dark,
+.mic-icon.dark {
+  color: #ffffff;
 }
 
 .search-input {
@@ -86,8 +132,16 @@
   border: none;
   border-radius: 10px;
   outline: none;
+}
+
+.search-input.light {
+  background-color: #f5f5f5;
+  color: #333333;
+}
+
+.search-input.dark {
   background-color: #333;
-  color: white;
+  color: #ffffff;
 }
 
 .search-input:focus {
@@ -120,40 +174,82 @@
   100% { transform: translate(-50%, -50%) scale(1); }
 }
 
-.sidebar {
-  position: fixed;
-  top: 64px; /* Adjust according to your navbar */
-  right: 0;
-  height: calc(100vh - 64px);
-  width: 220px;
-  background-color: #121212; /* deep black tone */
-  padding: 30px 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: 24px;
-  box-shadow: -2px 0 12px rgba(0, 0, 0, 0.4);
-  transition: transform 0.3s ease-in-out;
-  z-index: 1000;
-  border-left: 1px solid #2a2a2a;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* Theme styles */
+.app-container {
+  min-height: 100vh;
+  transition: background-color 0.3s ease;
 }
 
-.sidebar p {
-  color: #f5f5f5;
-  font-size: 17px;
-  font-weight: 500;
-  padding: 10px 0;
-  border-bottom: 1px solid #2c2c2c;
+.app-container.light {
+  background-color: #ffffff;
+  color: #333333;
+}
+
+.app-container.dark {
+  background-color: #1a1a1a;
+  color: #ffffff;
+}
+
+/* Update existing styles for dark theme */
+.dark .search-bar-container {
+  background-color: #2d2d2d;
+}
+
+.dark .search-input {
+  background-color: #3d3d3d;
+  color: #ffffff;
+}
+
+.dark .search-icon,
+.dark .mic-icon {
+  color: #ffffff;
+}
+
+.profile-wrapper {
+  position: relative;
   cursor: pointer;
-  transition: color 0.3s ease;
 }
 
-.sidebar p:hover {
-  color: #00ffff; /* Neon blue hover effect */
+.profile-nav {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 10px;
+  min-width: 200px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
 }
 
-.sidebar hr {
-  display: none; /* You don’t need separate `<hr>` if you're using border-bottom on <p> */
+.profile-nav.light {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+}
+
+.profile-nav.dark {
+  background-color: #1a1a1a;
+  border: 1px solid #2c2c2c;
+}
+
+.profile-nav-item {
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.profile-nav.light .profile-nav-item {
+  color: #333333;
+}
+
+.profile-nav.dark .profile-nav-item {
+  color: #ffffff;
+}
+
+.profile-nav.light .profile-nav-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.profile-nav.dark .profile-nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 

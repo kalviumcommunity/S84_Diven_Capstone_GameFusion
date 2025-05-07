@@ -4,7 +4,11 @@ import "./firstPage.css";
 import videoBg from "../assets/89894-616430996_small.mp4";
 
 export default function LandingPage() {
-  const navigate = useNavigate(); // ✅ add this
+  const navigate = useNavigate();
+
+  const handleVideoError = (e) => {
+    console.error("Error loading video:", e);
+  };
 
   return (
     <div className="landing-container">
@@ -15,6 +19,7 @@ export default function LandingPage() {
         muted
         loop
         playsInline
+        onError={handleVideoError}
       />
 
       <div className="overlay">
@@ -23,7 +28,6 @@ export default function LandingPage() {
         </h1>
         <p>Explore, play, and conquer the best games all in one place. Ready to level up?</p>
         
-        {/* ✅ this button navigates */}
         <button className="get-started" onClick={() => navigate("/second")}>
           Get started →
         </button>

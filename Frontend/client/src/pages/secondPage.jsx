@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import MicButton from "../components/micButton";
+import HamburgerNav from "../components/hamburgerNav";
 import "./secondPage.css";
 import duelystImage from "../assets/duelyst-video-games-multiple-display-wallpaper-thumb.jpg";
 
 export default function SecondPage() {
   const [searchText, setSearchText] = useState("");
-  const [showSidebar, setShowSidebar] = useState(false); // NEW STATE
+  const [showSidebar, setShowSidebar] = useState(false);
+  const [showProfileNav, setShowProfileNav] = useState(false);
+  const [theme, setTheme] = useState("dark");
 
   const handleTranscript = (transcript) => {
     setSearchText(transcript);
@@ -14,25 +17,39 @@ export default function SecondPage() {
 
   const toggleSidebar = () => {
     setShowSidebar(!showSidebar);
+    setShowProfileNav(false); // Close profile nav when opening sidebar
   };
+
+  const toggleProfileNav = () => {
+    setShowProfileNav(!showProfileNav);
+    setShowSidebar(false); // Close sidebar when opening profile nav
+  };
+
+  const toggleTheme = (newTheme) => {
+    setTheme(newTheme);
+    document.body.className = newTheme;
+  };
+
   const navigate = useNavigate();
 
-
   return (
-<div>
-
-      <div className="nav-bar">
+    <div className={`app-container ${theme}`}>
+      <div className={`nav-bar ${theme}`}>
         <div className="nav-icons">
-          <span className="hamburger">☰</span>
-          <h1 className="logo">
+          <HamburgerNav 
+            showSidebar={showSidebar}
+            toggleSidebar={toggleSidebar}
+            theme={theme}
+            toggleTheme={toggleTheme}
+          />
+          <h1 className={`logo ${theme}`}>
             <span>GameFusion</span>
           </h1>
-          <div className="profile-wrapper" onClick={toggleSidebar}>
-            {/* onClick added here */}
+          <div className="profile-wrapper" onClick={toggleProfileNav}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="currentColor"
-              className="profile-icon"
+              className={`profile-icon ${theme}`}
               viewBox="0 0 16 16"
             >
               <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
@@ -41,6 +58,13 @@ export default function SecondPage() {
                 d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"
               />
             </svg>
+            {showProfileNav && (
+              <div className={`profile-nav ${theme}`}>
+                <div className="profile-nav-item">Profile</div>
+                <div className="profile-nav-item">Settings</div>
+                <div className="profile-nav-item" onClick={() => navigate("/")}>Logout</div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -51,8 +75,8 @@ export default function SecondPage() {
       </div>
 
       {/* Search bar */}
-      <div className="search-bar-container">
-        <div className="search-icon">
+      <div className={`search-bar-container ${theme}`}>
+        <div className={`search-icon ${theme}`}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="18"
@@ -67,7 +91,7 @@ export default function SecondPage() {
 
         <input
           type="text"
-          className="search-input"
+          className={`search-input ${theme}`}
           placeholder="Search games..."
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
@@ -75,19 +99,6 @@ export default function SecondPage() {
 
         <MicButton onTranscript={handleTranscript} />
       </div>
-
-      {/* Sidebar */}
-      {showSidebar && (
-        <div className="sidebar">
-          <p>Profile</p>
-          <hr></hr>
-          <p>Settings</p>
-          <hr></hr>
-          <p onClick={() => navigate("/")}>Logout</p>
-
-          <hr></hr>
-        </div>
-      )}
     </div>
   );
 }
