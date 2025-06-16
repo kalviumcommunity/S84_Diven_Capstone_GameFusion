@@ -1,5 +1,6 @@
 // src/components/ProfileNav.jsx
 import React from "react";
+import { Link } from "react-router-dom";
 import "./profileNav.css";
 
 export default function ProfileNav({ toggleDrawer, showNavDrawer }) {
@@ -33,9 +34,9 @@ export default function ProfileNav({ toggleDrawer, showNavDrawer }) {
       {showNavDrawer && (
         <div className="nav-drawer">
           <ul>
-            <li>Profile</li>
-            <li>Settings</li>
-            <li>Log Out</li>
+            <li><Link to="/login">Login</Link></li>
+            <li><Link to="/signup">Signup</Link></li>
+            <li>Contact</li>
           </ul>
         </div>
       )}

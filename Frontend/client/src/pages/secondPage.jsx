@@ -4,6 +4,18 @@ import MicButton from "../components/micButton";
 import HamburgerNav from "../components/hamburgerNav";
 import "./secondPage.css";
 import duelystImage from "../assets/duelyst-video-games-multiple-display-wallpaper-thumb.jpg";
+import leagueImg from '../assets/league-of-legends.webp';
+import minecraftImg from '../assets/images.jpeg';
+import overwatchImg from '../assets/images (3).jpeg';
+import apexImg from '../assets/images (2).jpeg';
+import fortniteImg from '../assets/images (1).jpeg';
+import valorantImg from '../assets/red-bull-campus-clutch-new-zealand.avif';
+import dontStarveImg from '../assets/dont-starve-873zcco14pemp30d.jpg';
+import rustImg from '../assets/Rust.jpeg';
+import longDarkImg from '../assets/The long dark.jpeg';
+import arkImg from '../assets/ark survival evolved.webp';
+import greenHellImg from '../assets/green hell.jpg';
+import sonsForestImg from '../assets/sons-of-the-forest-february-22.avif';
 
 export default function SecondPage() {
   const [searchText, setSearchText] = useState("");
@@ -60,9 +72,9 @@ export default function SecondPage() {
             </svg>
             {showProfileNav && (
               <div className={`profile-nav ${theme}`}>
-                <div className="profile-nav-item">Profile</div>
-                <div className="profile-nav-item">Settings</div>
-                <div className="profile-nav-item" onClick={() => navigate("/")}>Logout</div>
+                <div className="profile-nav-item" onClick={() => navigate('/auth', { state: { isLogin: true } })}>Login</div>
+                <div className="profile-nav-item" onClick={() => navigate('/auth', { state: { isLogin: false } })}>Signup</div>
+                <div className="profile-nav-item">Contact</div>
               </div>
             )}
           </div>
@@ -98,6 +110,64 @@ export default function SecondPage() {
         />
 
         <MicButton onTranscript={handleTranscript} />
+      </div>
+
+      {/* Top Games Section */}
+      <div className="section-title"><span className="section-icon" role="img" aria-label="trophy">🏆</span>Top Games</div>
+      <div className="game-grid">
+        {[
+          { name: 'Valorant', stars: 5, img: valorantImg },
+          { name: 'League of Legends', stars: 4, img: leagueImg },
+          { name: 'Minecraft', stars: 5, img: minecraftImg },
+          { name: 'Fortnite', stars: 4, img: fortniteImg },
+          { name: 'Apex Legends', stars: 3, img: apexImg },
+          { name: 'Overwatch', stars: 4, img: overwatchImg },
+        ].map((game, idx) => (
+          <div className="game-card-new" key={idx}>
+            <img className="game-card-img" src={game.img || "https://via.placeholder.com/300x120?text=Game+Image"} alt="Game" />
+            <div className="game-card-header">
+              <span className="game-card-title">{game.name}</span>
+            </div>
+            <div className="game-card-stars">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <span key={i} style={{ color: i < game.stars ? '#FFD700' : '#ccc', fontSize: '1.2rem' }}>★</span>
+              ))}
+            </div>
+            <div className="game-card-actions">
+              <a href="#" className="know-more-link">Know more-</a>
+              <button className="wishlist-btn" title="Add to wishlist">♡</button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Survival Section */}
+      <div className="section-title"><span className="section-icon" role="img" aria-label="survival">🛡️</span>Survival</div>
+      <div className="game-grid">
+        {[
+          { name: "Don't Starve", stars: 4, img: dontStarveImg },
+          { name: 'Rust', stars: 5, img: rustImg },
+          { name: 'The Long Dark', stars: 4, img: longDarkImg },
+          { name: 'ARK: Survival Evolved', stars: 5, img: arkImg },
+          { name: 'Green Hell', stars: 4, img: greenHellImg },
+          { name: 'Sons of the Forest', stars: 5, img: sonsForestImg },
+        ].map((game, idx) => (
+          <div className="game-card-new" key={idx}>
+            <img className="game-card-img" src={game.img || "https://via.placeholder.com/300x120?text=Game+Image"} alt="Game" />
+            <div className="game-card-header">
+              <span className="game-card-title">{game.name}</span>
+            </div>
+            <div className="game-card-stars">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <span key={i} style={{ color: i < game.stars ? '#FFD700' : '#ccc', fontSize: '1.2rem' }}>★</span>
+              ))}
+            </div>
+            <div className="game-card-actions">
+              <a href="#" className="know-more-link">Know more-</a>
+              <button className="wishlist-btn" title="Add to wishlist">♡</button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

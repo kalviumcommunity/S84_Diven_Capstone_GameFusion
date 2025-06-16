@@ -25,38 +25,100 @@
   }
   
   .profile-wrapper {
+    position: relative;
     cursor: pointer;
   }
   
   .profile-icon {
-    width: 30px;
-    height: 30px;
+    margin-left: 560px;
+    margin-top: 35px;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease;
+  }
+  
+  .profile-icon.light {
+    color: #333333;
+  }
+  
+  .profile-icon.dark {
+    color: #ffffff;
+  }
+  
+  .profile-icon:hover {
+    color: #858080cc;
+  }
+  
+  .profile-nav {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 10px;
+    min-width: 200px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+  }
+  
+  .profile-nav.light {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+  }
+  
+  .profile-nav.dark {
+    background-color: #1a1a1a;
+    border: 1px solid #2c2c2c;
+  }
+  
+  .profile-nav-item {
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .profile-nav.light .profile-nav-item {
+    color: #333333;
+  }
+  
+  .profile-nav.dark .profile-nav-item {
+    color: #ffffff;
+  }
+  
+  .profile-nav.light .profile-nav-item:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  
+  .profile-nav.dark .profile-nav-item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
   }
   
   .nav-drawer {
-    position: fixed;
-    top: 0;
+    position: absolute;
+    top: 100%;
     right: 0;
     background-color: #fff;
-    width: 200px;
-    height: 100%;
-    box-shadow: -2px 0px 5px rgba(0, 0, 0, 0.3);
-    padding: 20px;
-    z-index: 10;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 10px 0;
+    min-width: 150px;
+    z-index: 1000;
   }
   
   .nav-drawer ul {
-    list-style-type: none;
+    list-style: none;
     padding: 0;
     margin: 0;
   }
   
   .nav-drawer li {
-    padding: 15px;
+    padding: 12px 20px;
     cursor: pointer;
+    transition: background-color 0.2s ease;
+    color: #333;
   }
   
   .nav-drawer li:hover {
-    background-color: #f1f1f1;
+    background-color: rgba(0, 0, 0, 0.05);
   }
   
