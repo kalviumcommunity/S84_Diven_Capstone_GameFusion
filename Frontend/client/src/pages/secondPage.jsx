@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useWishlist } from "../context/WishlistContext";
 import MicButton from "../components/micButton";
 import HamburgerNav from "../components/hamburgerNav";
 import "./secondPage.css";
@@ -16,15 +17,93 @@ import longDarkImg from '../assets/The long dark.jpeg';
 import arkImg from '../assets/ark survival evolved.webp';
 import greenHellImg from '../assets/green hell.jpg';
 import sonsForestImg from '../assets/sons-of-the-forest-february-22.avif';
+// Latest Games imports
+import cyberpunkImg from '../assets/cyberpunk 2077.webp';
+import eldenRingImg from '../assets/Elder ring.avif';
+import godOfWarImg from '../assets/god of war ragnarok.jpeg';
+import spidermanImg from '../assets/Spiderman 2.avif';
+import hogwartsImg from '../assets/hogwarts legacy.webp';
+import starfieldImg from '../assets/starfield.jpg';
 
 export default function SecondPage() {
   const [searchText, setSearchText] = useState("");
   const [showSidebar, setShowSidebar] = useState(false);
   const [showProfileNav, setShowProfileNav] = useState(false);
   const [theme, setTheme] = useState("dark");
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+
+  const API_KEY = 'dbb830f2fcc14d9bad3250b12c241e01';
+  const API_BASE_URL = 'https://api.rawg.io/api';
 
   const handleTranscript = (transcript) => {
     setSearchText(transcript);
+    if (transcript.trim()) {
+      searchGames(transcript);
+    }
+  };
+
+  const searchGames = async (query) => {
+    if (!query.trim()) return;
+    
+    setIsSearching(true);
+    try {
+      const response = await fetch(`https://api.rawg.io/api/games?key=${API_KEY}&search=${encodeURIComponent(query)}&page_size=5`);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch games');
+      }
+
+      const data = await response.json();
+      const suggestions = data.results.map(game => ({
+        id: game.id.toString(),
+        name: game.name,
+        img: game.background_image,
+        rating: game.rating,
+        released: game.released
+      }));
+
+      setSearchSuggestions(suggestions);
+    } catch (error) {
+      console.error('Error searching games:', error);
+      setSearchSuggestions([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchText(value);
+    
+    if (value.trim()) {
+      // Debounce search to avoid too many API calls
+      const timeoutId = setTimeout(() => {
+        searchGames(value);
+      }, 300);
+      
+      return () => clearTimeout(timeoutId);
+    } else {
+      setSearchSuggestions([]);
+      setShowDropdown(false);
+    }
+  };
+
+  const handleSuggestionClick = (game) => {
+    setSearchText(game.name);
+    setShowDropdown(false);
+    // Navigate to search results page
+    navigate(`/search?q=${encodeURIComponent(game.name)}`);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchText.trim()) {
+      setShowDropdown(false);
+      navigate(`/search?q=${encodeURIComponent(searchText)}`);
+    }
   };
 
   const toggleSidebar = () => {
@@ -42,7 +121,44 @@ export default function SecondPage() {
     document.body.className = newTheme;
   };
 
+  const handleWishlistToggle = (game) => {
+    if (isInWishlist(game.id)) {
+      removeFromWishlist(game.id);
+    } else {
+      addToWishlist(game);
+    }
+  };
+
   const navigate = useNavigate();
+
+  // Latest Games data with unique IDs and local images
+  const latestGames = [
+    { id: 'cyberpunk-2077', name: 'Cyberpunk 2077', stars: 4, img: cyberpunkImg },
+    { id: 'elden-ring', name: 'Elden Ring', stars: 5, img: eldenRingImg },
+    { id: 'god-of-war-ragnarok', name: 'God of War Ragnarök', stars: 5, img: godOfWarImg },
+    { id: 'spider-man-2', name: 'Spider-Man 2', stars: 4, img: spidermanImg },
+    { id: 'hogwarts-legacy', name: 'Hogwarts Legacy', stars: 4, img: hogwartsImg },
+    { id: 'starfield', name: 'Starfield', stars: 3, img: starfieldImg },
+  ];
+
+  // Game data with unique IDs
+  const topGames = [
+    { id: 'valorant', name: 'Valorant', stars: 5, img: valorantImg },
+    { id: 'league-of-legends', name: 'League of Legends', stars: 4, img: leagueImg },
+    { id: 'minecraft', name: 'Minecraft', stars: 5, img: minecraftImg },
+    { id: 'fortnite', name: 'Fortnite', stars: 4, img: fortniteImg },
+    { id: 'apex-legends', name: 'Apex Legends', stars: 3, img: apexImg },
+    { id: 'overwatch', name: 'Overwatch', stars: 4, img: overwatchImg },
+  ];
+
+  const survivalGames = [
+    { id: 'dont-starve', name: "Don't Starve", stars: 4, img: dontStarveImg },
+    { id: 'rust', name: 'Rust', stars: 5, img: rustImg },
+    { id: 'the-long-dark', name: 'The Long Dark', stars: 4, img: longDarkImg },
+    { id: 'ark-survival-evolved', name: 'ARK: Survival Evolved', stars: 5, img: arkImg },
+    { id: 'green-hell', name: 'Green Hell', stars: 4, img: greenHellImg },
+    { id: 'sons-of-the-forest', name: 'Sons of the Forest', stars: 5, img: sonsForestImg },
+  ];
 
   return (
     <div className={`app-container ${theme}`}>
@@ -86,45 +202,86 @@ export default function SecondPage() {
         <img className="image-1" src={duelystImage} alt="Game banner" />
       </div>
 
-      {/* Search bar */}
+      {/* Search bar with dropdown */}
       <div className={`search-bar-container ${theme}`}>
-        <div className={`search-icon ${theme}`}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            fill="currentColor"
-            className="bi bi-search"
-            viewBox="0 0 16 16"
-          >
-            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-          </svg>
-        </div>
+        <form onSubmit={handleSearchSubmit} className="search-form">
+          <div className={`search-icon ${theme}`}>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              fill="currentColor"
+              className="bi bi-search"
+              viewBox="0 0 16 16"
+            >
+              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+            </svg>
+          </div>
 
-        <input
-          type="text"
-          className={`search-input ${theme}`}
-          placeholder="Search games..."
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-        />
+          <input
+            type="text"
+            className={`search-input ${theme}`}
+            placeholder="Search games..."
+            value={searchText}
+            onChange={handleSearchChange}
+            onFocus={() => {
+              if (searchText.trim() && searchSuggestions.length > 0) {
+                setShowDropdown(true);
+              }
+            }}
+          />
 
-        <MicButton onTranscript={handleTranscript} />
+          <MicButton onTranscript={handleTranscript} />
+        </form>
+
+        {/* Search Dropdown */}
+        {showDropdown && (
+          <div className={`search-dropdown ${theme}`}>
+            {isSearching ? (
+              <div className="dropdown-loading">
+                <span className="loading-spinner">⏳</span>
+                Searching...
+              </div>
+            ) : searchSuggestions.length > 0 ? (
+              searchSuggestions.map((game) => (
+                <div
+                  key={game.id}
+                  className={`dropdown-item ${theme}`}
+                  onClick={() => handleSuggestionClick(game)}
+                >
+                  <img 
+                    className="dropdown-item-img" 
+                    src={game.img} 
+                    alt={game.name}
+                  />
+                  <div className="dropdown-item-content">
+                    <div className="dropdown-item-name">{game.name}</div>
+                    {game.released && (
+                      <div className="dropdown-item-release">{game.released}</div>
+                    )}
+                  </div>
+                  <div className="dropdown-item-rating">
+                    {game.rating ? `★ ${game.rating.toFixed(1)}` : 'N/A'}
+                  </div>
+                </div>
+              ))
+            ) : searchText.trim() && (
+              <div className="dropdown-no-results">No games found</div>
+            )}
+          </div>
+        )}
       </div>
 
-      {/* Top Games Section */}
-      <div className="section-title"><span className="section-icon" role="img" aria-label="trophy">🏆</span>Top Games</div>
+      {/* Latest Games Section */}
+      <div className="section-title"><span className="section-icon" role="img" aria-label="fire">🔥</span>Latest Games</div>
       <div className="game-grid">
-        {[
-          { name: 'Valorant', stars: 5, img: valorantImg },
-          { name: 'League of Legends', stars: 4, img: leagueImg },
-          { name: 'Minecraft', stars: 5, img: minecraftImg },
-          { name: 'Fortnite', stars: 4, img: fortniteImg },
-          { name: 'Apex Legends', stars: 3, img: apexImg },
-          { name: 'Overwatch', stars: 4, img: overwatchImg },
-        ].map((game, idx) => (
-          <div className="game-card-new" key={idx}>
-            <img className="game-card-img" src={game.img || "https://via.placeholder.com/300x120?text=Game+Image"} alt="Game" />
+        {latestGames.map((game) => (
+          <div className="game-card-new" key={game.id}>
+            <img 
+              className="game-card-img" 
+              src={game.img} 
+              alt={game.name}
+            />
             <div className="game-card-header">
               <span className="game-card-title">{game.name}</span>
             </div>
@@ -135,7 +292,45 @@ export default function SecondPage() {
             </div>
             <div className="game-card-actions">
               <a href="#" className="know-more-link">Know more-</a>
-              <button className="wishlist-btn" title="Add to wishlist">♡</button>
+              <button 
+                className={`wishlist-btn ${isInWishlist(game.id) ? 'in-wishlist' : ''}`}
+                onClick={() => handleWishlistToggle(game)}
+                title={isInWishlist(game.id) ? "Remove from wishlist" : "Add to wishlist"}
+              >
+                {isInWishlist(game.id) ? '❤️' : '♡'}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Top Games Section */}
+      <div className="section-title"><span className="section-icon" role="img" aria-label="trophy">🏆</span>Top Games</div>
+      <div className="game-grid">
+        {topGames.map((game) => (
+          <div className="game-card-new" key={game.id}>
+            <img 
+              className="game-card-img" 
+              src={game.img} 
+              alt={game.name}
+            />
+            <div className="game-card-header">
+              <span className="game-card-title">{game.name}</span>
+            </div>
+            <div className="game-card-stars">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <span key={i} style={{ color: i < game.stars ? '#FFD700' : '#ccc', fontSize: '1.2rem' }}>★</span>
+              ))}
+            </div>
+            <div className="game-card-actions">
+              <a href="#" className="know-more-link">Know more-</a>
+              <button 
+                className={`wishlist-btn ${isInWishlist(game.id) ? 'in-wishlist' : ''}`}
+                onClick={() => handleWishlistToggle(game)}
+                title={isInWishlist(game.id) ? "Remove from wishlist" : "Add to wishlist"}
+              >
+                {isInWishlist(game.id) ? '❤️' : '♡'}
+              </button>
             </div>
           </div>
         ))}
@@ -144,16 +339,13 @@ export default function SecondPage() {
       {/* Survival Section */}
       <div className="section-title"><span className="section-icon" role="img" aria-label="survival">🛡️</span>Survival</div>
       <div className="game-grid">
-        {[
-          { name: "Don't Starve", stars: 4, img: dontStarveImg },
-          { name: 'Rust', stars: 5, img: rustImg },
-          { name: 'The Long Dark', stars: 4, img: longDarkImg },
-          { name: 'ARK: Survival Evolved', stars: 5, img: arkImg },
-          { name: 'Green Hell', stars: 4, img: greenHellImg },
-          { name: 'Sons of the Forest', stars: 5, img: sonsForestImg },
-        ].map((game, idx) => (
-          <div className="game-card-new" key={idx}>
-            <img className="game-card-img" src={game.img || "https://via.placeholder.com/300x120?text=Game+Image"} alt="Game" />
+        {survivalGames.map((game) => (
+          <div className="game-card-new" key={game.id}>
+            <img 
+              className="game-card-img" 
+              src={game.img} 
+              alt={game.name}
+            />
             <div className="game-card-header">
               <span className="game-card-title">{game.name}</span>
             </div>
@@ -164,7 +356,13 @@ export default function SecondPage() {
             </div>
             <div className="game-card-actions">
               <a href="#" className="know-more-link">Know more-</a>
-              <button className="wishlist-btn" title="Add to wishlist">♡</button>
+              <button 
+                className={`wishlist-btn ${isInWishlist(game.id) ? 'in-wishlist' : ''}`}
+                onClick={() => handleWishlistToggle(game)}
+                title={isInWishlist(game.id) ? "Remove from wishlist" : "Add to wishlist"}
+              >
+                {isInWishlist(game.id) ? '❤️' : '♡'}
+              </button>
             </div>
           </div>
         ))}
