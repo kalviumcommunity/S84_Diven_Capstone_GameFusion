@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './hamburgerNav.css';
 
 const HamburgerNav = ({ showSidebar, toggleSidebar, theme, toggleTheme }) => {
   const [showThemeOptions, setShowThemeOptions] = useState(false);
+  const navigate = useNavigate();
 
   const handleThemeClick = () => {
     setShowThemeOptions(!showThemeOptions);
+  };
+
+  const handleWishlistClick = () => {
+    navigate('/wishlist');
+    toggleSidebar(); // Close sidebar after navigation
   };
 
   return (
@@ -20,7 +27,7 @@ const HamburgerNav = ({ showSidebar, toggleSidebar, theme, toggleTheme }) => {
           </div>
           
           <div className="sidebar-content">
-            <div className="sidebar-item">
+            <div className="sidebar-item" onClick={handleWishlistClick}>
               <span className="icon">❤️</span>
               <span>Wishlist</span>
             </div>

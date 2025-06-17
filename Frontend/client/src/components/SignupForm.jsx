@@ -1,17 +1,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import loginImage1 from '../assets/login(1).jpg';
-import loginImage2 from '../assets/login(2).jpg';
-import './SignupForm.css';
+import './LoginForm.css';
 
 export default function SignupForm() {
   const [formData, setFormData] = useState({
-    fullName: '',
+    username: '',
     email: '',
     password: '',
     confirmPassword: ''
   });
-  const [theme] = useState('dark');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -22,64 +19,34 @@ export default function SignupForm() {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      console.error('Passwords do not match');
-      return;
-    }
-
-    try {
-      const response = await fetch('http://localhost:5000/api/auth/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fullName: formData.fullName,
-          email: formData.email,
-          password: formData.password
-        })
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Store the token in localStorage
-        localStorage.setItem('token', data.token);
-        // Navigate to the second page
-        navigate('/second');
-      } else {
-        // Handle error
-        console.error('Signup failed:', data.message);
-      }
-    } catch (error) {
-      console.error('Error during signup:', error);
-    }
+    // Simple navigation without authentication
+    navigate('/second');
   };
 
   return (
-    <div className={`signup-container ${theme}`}>
+    <div className="login-container">
       <button className="back-arrow" onClick={() => navigate('/second')}>
         ←
       </button>
-      <div className="signup-box">
-        <div className="signup-header">
-          <h1 className="signup-title">
+      <div className="login-box">
+        <div className="login-header">
+          <h1 className="login-title">
             <span>GameFusion</span>
           </h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="signup-form">
+        <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
-            <label>Full Name</label>
+            <label>Username</label>
             <input 
               type="text" 
-              name="fullName"
-              value={formData.fullName}
+              name="username"
+              value={formData.username}
               onChange={handleChange}
-              placeholder="Enter your full name"
-              className={`signup-input ${theme}`}
+              placeholder="Enter your username"
+              className="login-input"
               required
             />
           </div>
@@ -92,7 +59,7 @@ export default function SignupForm() {
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
-              className={`signup-input ${theme}`}
+              className="login-input"
               required
             />
           </div>
@@ -105,7 +72,7 @@ export default function SignupForm() {
               value={formData.password}
               onChange={handleChange}
               placeholder="Enter your password"
-              className={`signup-input ${theme}`}
+              className="login-input"
               required
             />
           </div>
@@ -118,17 +85,17 @@ export default function SignupForm() {
               value={formData.confirmPassword}
               onChange={handleChange}
               placeholder="Confirm your password"
-              className={`signup-input ${theme}`}
+              className="login-input"
               required
             />
           </div>
 
-          <button type="submit" className="signup-submit">
+          <button type="submit" className="login-submit">
             Sign Up
           </button>
         </form>
 
-        <div className="signup-footer">
+        <div className="login-footer">
           <p>
             Already have an account?{' '}
             <button 

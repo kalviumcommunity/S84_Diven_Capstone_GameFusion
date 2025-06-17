@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import loginImage from '../assets/login(2).jpg';
 import './LoginForm.css';
 
 export default function LoginForm() {
@@ -8,7 +7,6 @@ export default function LoginForm() {
     email: '',
     password: ''
   });
-  const [theme] = useState('dark');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -19,35 +17,14 @@ export default function LoginForm() {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Store the token in localStorage
-        localStorage.setItem('token', data.token);
-        // Navigate to the second page
-        navigate('/second');
-      } else {
-        // Handle error
-        console.error('Login failed:', data.message);
-      }
-    } catch (error) {
-      console.error('Error during login:', error);
-    }
+    // Simple navigation without authentication
+    navigate('/second');
   };
 
   return (
-    <div className={`login-container ${theme}`}>
+    <div className="login-container">
       <button className="back-arrow" onClick={() => navigate('/second')}>
         ←
       </button>
@@ -67,7 +44,7 @@ export default function LoginForm() {
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
-              className={`login-input ${theme}`}
+              className="login-input"
               required
             />
           </div>
@@ -80,7 +57,7 @@ export default function LoginForm() {
               value={formData.password}
               onChange={handleChange}
               placeholder="Enter your password"
-              className={`login-input ${theme}`}
+              className="login-input"
               required
             />
           </div>
