@@ -1,11 +1,25 @@
+/* Overall Page Styling */
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  overflow-x: hidden; /* Prevent horizontal scrollbar on body */
+}
+
 .wishlist-container {
+  display: flex;
+  flex-direction: column; /* Changed to column to stack header and list */
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a2e 0%, #2d1b3d 50%, #4a1b4a 100%);
+  background: linear-gradient(rgba(26, 26, 46, 0.8), rgba(45, 27, 61, 0.8), rgba(74, 27, 74, 0.8)), url('../assets/wishlist background.jpg'); /* Purple/dark blue gradient overlay + background image */
+  background-size: cover; /* Ensure the image covers the entire background */
+  background-position: center center; /* Center the background image */
   color: white;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 .wishlist-container.light {
-  background: linear-gradient(135deg, #f8f9fa 0%, #f3e5f5 50%, #e1bee7 100%);
+  background: linear-gradient(rgba(248, 249, 250, 0.8), rgba(243, 229, 245, 0.8), rgba(225, 190, 231, 0.8)), url('../assets/wishlist background.jpg'); /* Lighter gradient overlay + background image */
+  background-size: cover;
+  background-position: center center;
   color: #333;
 }
 
@@ -43,41 +57,50 @@
 }
 
 .wishlist-content {
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
+  flex-grow: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  max-width: 1200px; /* Constrain content width */
+  margin: 0 auto; /* Center content */
 }
 
 .wishlist-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-  padding: 20px 0;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+  margin-bottom: 50px;
+  padding-bottom: 25px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1); /* Subtle white/light line */
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2); /* Subtle shadow for header */
 }
 
 .wishlist-container.light .wishlist-header {
   border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
 }
 
 .wishlist-title {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  font-size: 2.5rem;
+  font-size: 3.5rem;
   font-weight: bold;
+  color: #e91e63; /* Pink header text */
   margin: 0;
 }
 
+.wishlist-container.light .wishlist-title {
+  color: #9c27b0; /* Purple header text for light theme */
+}
+
 .wishlist-icon {
-  font-size: 2.5rem;
-  animation: heartbeat 2s infinite;
+  color: #ff6b6b; /* Red heart icon */
+  font-size: 3.2rem;
+  vertical-align: middle;
+  margin-left: 15px;
+  animation: heartbeat 1.5s infinite;
 }
 
 @keyframes heartbeat {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  50% { transform: scale(1.15); }
 }
 
 .clear-wishlist-btn {
@@ -90,28 +113,31 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
 }
 
 .clear-wishlist-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
 }
 
 .clear-wishlist-btn.light {
   background: linear-gradient(135deg, #dc3545, #c82333);
-  box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
 }
 
 .clear-wishlist-btn.light:hover {
   box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
 }
 
+/* Empty Wishlist Styling */
 .empty-wishlist {
   text-align: center;
   padding: 80px 20px;
   max-width: 500px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
 }
 
 .empty-wishlist-icon {
@@ -160,127 +186,135 @@
   box-shadow: 0 6px 20px rgba(156, 39, 176, 0.4);
 }
 
-.wishlist-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+/* Wishlist List Container */
+.wishlist-list {
+  display: flex;
+  flex-direction: column;
   gap: 25px;
   padding: 20px 0;
+  width: 1000px;
+  height: 700px;
 }
 
-.wishlist-card {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
+/* Wishlist List Item Styling */
+.wishlist-list-item {
+  display: flex;
+  background-color: #282828; /* Dark background for items */
+  border-radius: 12px;
   overflow: hidden;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); /* Subtle shadow for depth */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 250px; /* Increased height for consistency */
+  align-items: stretch; /* Stretch items to fill height */
+  border: 1px solid rgba(255, 255, 255, 0.05); /* Subtle border */
 }
 
-.wishlist-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+.wishlist-list-item:hover {
+  transform: translateY(-5px); /* Slight lift on hover */
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5);
 }
 
-.wishlist-card.light {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+.wishlist-container.light .wishlist-list-item {
+  background-color: #ffffff; /* Light background for items in light theme */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.wishlist-card.light:hover {
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+.wishlist-container.light .wishlist-list-item:hover {
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
 }
 
-.wishlist-card-img {
+.list-item-image {
+  width: 300px; /* Fixed width for the image */
+  height: 100%;
+  overflow: hidden;
+  flex-shrink: 0; /* Prevent image from shrinking */
+  border-radius: 12px 0 0 12px; /* Rounded corners only on the left */
+}
+
+.list-item-image img {
   width: 100%;
-  height: 200px;
-  object-fit: cover;
-  transition: transform 0.3s ease;
+  height: 100%;
+  object-fit: cover; /* Cover the area, cropping if necessary */
+  display: block; /* Remove extra space below image */
 }
 
-.wishlist-card:hover .wishlist-card-img {
-  transform: scale(1.05);
+/* List Item Details */
+.list-item-details {
+  flex-grow: 1;
+  padding: 25px 35px 20px; /* Adjusted bottom padding to create space for absolute button */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Ensure content starts from the top */
+  height: 100%;
+  position: relative; /* Set as positioning context for absolute children */
 }
 
-.wishlist-card-content {
-  padding: 20px;
-}
-
-.wishlist-card-title {
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 10px;
+.game-name {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 8px;
   color: white;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
-.wishlist-card.light .wishlist-card-title {
+.wishlist-container.light .game-name {
   color: #333;
 }
 
-.wishlist-card-stars {
+.game-stars {
   margin-bottom: 15px;
 }
 
-.wishlist-card-actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
+.game-stars span {
+  color: #FFD700; /* Yellow for stars */
+  font-size: 1.4rem;
 }
 
-.know-more-btn {
-  background: linear-gradient(135deg, #e91e63, #9c27b0);
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  flex: 1;
-}
-
-.know-more-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
-}
-
-.know-more-btn.light {
-  background: linear-gradient(135deg, #9c27b0, #673ab7);
-}
-
-.remove-wishlist-btn {
-  background: rgba(255, 107, 107, 0.2);
-  color: #ff6b6b;
-  border: 2px solid #ff6b6b;
-  padding: 8px 12px;
-  border-radius: 50%;
+.release-date {
   font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  color: #b0b0b0; /* Light gray for release date */
+}
+
+.wishlist-container.light .release-date {
+  color: #666;
+}
+
+/* Styling for the remove section container */
+.remove-section {
+  position: absolute; /* Position relative to .list-item-details */
+  bottom: 135px; /* Adjusted position from the bottom to move it slightly higher */
+  right: 15px; /* Adjusted position from the right based on original image */
+  top: 110px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  min-width: 40px;
-  height: 40px;
+  align-items: center;
+  z-index: 10; /* Ensure it's above other content */
+  background-color: transparent; /* Revert temporary background */
+  padding: 0; /* Revert temporary padding */
+  border: none; /* Revert temporary border */
 }
 
-.remove-wishlist-btn:hover {
-  background: #ff6b6b;
-  color: white;
-  transform: scale(1.1);
+/* Styling for the delete button (now just contains the SVG) */
+.delete-wishlist-item-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0; /* Remove padding to make it truly small */
+  transition: transform 0.2s ease, fill 0.2s ease; /* Transition fill property for SVG */
 }
 
-.remove-wishlist-btn.light {
-  background: rgba(220, 53, 69, 0.1);
-  color: #dc3545;
-  border-color: #dc3545;
+.delete-wishlist-item-btn svg {
+  width: 35px; /* Set explicit width for SVG as per original subtle size */
+  height: 35px; /* Set explicit height for SVG as per original subtle size */
+  fill: rgba(255, 255, 255, 0.6); /* Light gray/white color for the bin, as seen in image */
 }
 
-.remove-wishlist-btn.light:hover {
-  background: #dc3545;
-  color: white;
+.delete-wishlist-item-btn:hover svg {
+  fill: rgba(255, 255, 255, 0.9); /* Brighter on hover */
+  transform: scale(1.1); /* Slightly enlarge on hover */
 }
 
 /* Responsive Design */
@@ -290,24 +324,54 @@
     gap: 20px;
     text-align: center;
   }
-  
+
   .wishlist-title {
     font-size: 2rem;
   }
-  
-  .wishlist-grid {
-    grid-template-columns: 1fr;
+
+  .wishlist-list {
+    padding: 15px;
     gap: 20px;
   }
-  
+
+  .wishlist-list-item {
+    flex-direction: column; /* Stack items vertically on smaller screens */
+    height: auto; /* Auto height when stacked */
+  }
+
+  .list-item-image {
+    width: 100%; /* Full width for image when stacked */
+    height: 220px; /* Slightly increase image height when stacked */
+    border-radius: 12px 12px 0 0; /* Rounded corners on top */
+  }
+
+  .list-item-details {
+    padding: 20px 20px 50px; /* Adjust bottom padding for stacked state */
+    text-align: center;
+    align-items: center;
+  }
+
+  .game-name {
+    font-size: 1.6rem;
+  }
+
+  .delete-wishlist-item-btn {
+    position: absolute; /* Keep absolute for stacked view to maintain position */
+    bottom: 10px;
+    right: 10px;
+    font-size: 0.8rem;
+    width: 14px;
+    height: 14px;
+  }
+
   .wishlist-content {
     padding: 15px;
   }
-  
+
   .empty-wishlist {
     padding: 60px 20px;
   }
-  
+
   .empty-wishlist-title {
     font-size: 1.5rem;
   }
@@ -317,13 +381,32 @@
   .wishlist-title {
     font-size: 1.8rem;
   }
-  
-  .wishlist-card-actions {
-    flex-direction: column;
-    gap: 15px;
+
+  .wishlist-list-item {
+    height: auto;
   }
-  
-  .know-more-btn {
-    width: 100%;
+
+  .list-item-image {
+    height: 180px;
+  }
+
+  .game-name {
+    font-size: 1.3rem;
+  }
+
+  .game-stars span {
+    font-size: 1rem;
+  }
+
+  .release-date {
+    font-size: 0.8rem;
+  }
+
+  .delete-wishlist-item-btn {
+    font-size: 0.7rem;
+    bottom: 5px;
+    right: 5px;
+    width: 12px;
+    height: 12px;
   }
 } 
