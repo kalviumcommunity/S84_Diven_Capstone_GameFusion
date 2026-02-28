@@ -192,8 +192,9 @@ body {
   flex-direction: column;
   gap: 25px;
   padding: 20px 0;
-  width: 1000px;
-  height: 700px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 /* Wishlist List Item Styling */
@@ -204,7 +205,7 @@ body {
   overflow: hidden;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); /* Subtle shadow for depth */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  height: 250px; /* Increased height for consistency */
+  min-height: 200px; /* Changed from fixed height to min-height */
   align-items: stretch; /* Stretch items to fill height */
   border: 1px solid rgba(255, 255, 255, 0.05); /* Subtle border */
 }
@@ -226,7 +227,7 @@ body {
 
 .list-item-image {
   width: 300px; /* Fixed width for the image */
-  height: 100%;
+  min-height: 200px; /* Changed to min-height */
   overflow: hidden;
   flex-shrink: 0; /* Prevent image from shrinking */
   border-radius: 12px 0 0 12px; /* Rounded corners only on the left */
@@ -246,7 +247,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: flex-start; /* Ensure content starts from the top */
-  height: 100%;
+  min-height: 200px; /* Changed to min-height */
   position: relative; /* Set as positioning context for absolute children */
 }
 
@@ -285,16 +286,12 @@ body {
 /* Styling for the remove section container */
 .remove-section {
   position: absolute; /* Position relative to .list-item-details */
-  bottom: 135px; /* Adjusted position from the bottom to move it slightly higher */
-  right: 15px; /* Adjusted position from the right based on original image */
-  top: 110px;
+  bottom: 20px; /* Adjusted position from the bottom */
+  right: 20px; /* Adjusted position from the right */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 10; /* Ensure it's above other content */
-  background-color: transparent; /* Revert temporary background */
-  padding: 0; /* Revert temporary padding */
-  border: none; /* Revert temporary border */
 }
 
 /* Styling for the delete button (now just contains the SVG) */

@@ -125,7 +125,9 @@ const WishlistPage = () => {
                       </span>
                     ))}
                   </div>
-                  <p className="release-date">Release date: xx/xx/xxxx</p> {/* Placeholder for release date */}
+                  {game.released && (
+                    <p className="release-date">Released: {game.released}</p>
+                  )}
                   <div className="remove-section">
                     <button 
                       className="delete-wishlist-item-btn" 

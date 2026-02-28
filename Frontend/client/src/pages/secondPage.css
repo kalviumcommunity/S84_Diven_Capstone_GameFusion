@@ -453,11 +453,16 @@ body, html, .app-container {
 }
 
 .know-more-link {
+  background: none;
+  border: none;
   color: #fff;
   text-decoration: underline;
   font-size: 0.95rem;
   margin-right: 1rem;
   transition: color 0.2s;
+  cursor: pointer;
+  padding: 0;
+  font-family: inherit;
 }
 .know-more-link:hover {
   color: #ffd6fa;

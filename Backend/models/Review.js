@@ -87,7 +87,7 @@ reviewSchema.pre('remove', async function(next) {
 reviewSchema.statics.getAverageRating = async function(gameId) {
   const result = await this.aggregate([
     {
-      $match: { game: mongoose.Types.ObjectId(gameId) }
+      $match: { game: new mongoose.Types.ObjectId(gameId) }
     },
     {
       $group: {

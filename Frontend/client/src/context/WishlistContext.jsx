@@ -12,21 +12,41 @@ export const useWishlist = () => {
 
 export const WishlistProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Load wishlist from localStorage on component mount
   useEffect(() => {
-    const savedWishlist = localStorage.getItem('wishlist');
-    if (savedWishlist) {
-      setWishlist(JSON.parse(savedWishlist));
+    try {
+      const savedWishlist = localStorage.getItem('wishlist');
+      if (savedWishlist) {
+        const parsed = JSON.parse(savedWishlist);
+        setWishlist(Array.isArray(parsed) ? parsed : []);
+      }
+    } catch (error) {
+      console.error('Error loading wishlist from localStorage:', error);
+      setWishlist([]);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
   // Save wishlist to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('wishlist', JSON.stringify(wishlist));
-  }, [wishlist]);
+    if (!isLoading) {
+      try {
+        localStorage.setItem('wishlist', JSON.stringify(wishlist));
+      } catch (error) {
+        console.error('Error saving wishlist to localStorage:', error);
+      }
+    }
+  }, [wishlist, isLoading]);
 
   const addToWishlist = (game) => {
+    if (!game || !game.id) {
+      console.error('Invalid game object:', game);
+      return;
+    }
+    
     setWishlist(prev => {
       const exists = prev.find(item => item.id === game.id);
       if (!exists) {
@@ -53,7 +73,8 @@ export const WishlistProvider = ({ children }) => {
     addToWishlist,
     removeFromWishlist,
     isInWishlist,
-    clearWishlist
+    clearWishlist,
+    isLoading
   };
 
   return (

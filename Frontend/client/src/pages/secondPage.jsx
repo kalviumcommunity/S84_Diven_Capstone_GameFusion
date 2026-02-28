@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useWishlist } from "../context/WishlistContext";
 import MicButton from "../components/micButton";
 import HamburgerNav from "../components/hamburgerNav";
+import { buildRawgUrl } from "../config/api";
 import "./secondPage.css";
 import duelystImage from "../assets/duelyst-video-games-multiple-display-wallpaper-thumb.jpg";
 import leagueImg from '../assets/league-of-legends.webp';
@@ -35,8 +36,22 @@ export default function SecondPage() {
   const [isSearching, setIsSearching] = useState(false);
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
-  const API_KEY = 'dbb830f2fcc14d9bad3250b12c241e01';
-  const API_BASE_URL = 'https://api.rawg.io/api';
+  const navigate = useNavigate();
+
+  // Debounced search effect
+  useEffect(() => {
+    if (searchText.trim()) {
+      setShowDropdown(true);
+      const timeoutId = setTimeout(() => {
+        searchGames(searchText);
+      }, 300);
+      
+      return () => clearTimeout(timeoutId);
+    } else {
+      setSearchSuggestions([]);
+      setShowDropdown(false);
+    }
+  }, [searchText]);
 
   const handleTranscript = (transcript) => {
     setSearchText(transcript);
@@ -50,7 +65,12 @@ export default function SecondPage() {
     
     setIsSearching(true);
     try {
-      const response = await fetch(`https://api.rawg.io/api/games?key=${API_KEY}&search=${encodeURIComponent(query)}&page_size=5`);
+      const url = buildRawgUrl('/games', {
+        search: query,
+        page_size: 5
+      });
+      
+      const response = await fetch(url);
       
       if (!response.ok) {
         throw new Error('Failed to fetch games');
@@ -60,15 +80,17 @@ export default function SecondPage() {
       const suggestions = data.results.map(game => ({
         id: game.id.toString(),
         name: game.name,
-        img: game.background_image,
+        img: game.background_image || 'https://via.placeholder.com/300x200?text=No+Image',
         rating: game.rating,
-        released: game.released
+        released: game.released,
+        stars: Math.round(game.rating) || 3
       }));
 
       setSearchSuggestions(suggestions);
     } catch (error) {
       console.error('Error searching games:', error);
       setSearchSuggestions([]);
+      // Optionally show a user-friendly error message
     } finally {
       setIsSearching(false);
     }
@@ -77,18 +99,6 @@ export default function SecondPage() {
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchText(value);
-    
-    if (value.trim()) {
-      // Debounce search to avoid too many API calls
-      const timeoutId = setTimeout(() => {
-        searchGames(value);
-      }, 300);
-      
-      return () => clearTimeout(timeoutId);
-    } else {
-      setSearchSuggestions([]);
-      setShowDropdown(false);
-    }
   };
 
   const handleSuggestionClick = (game) => {
@@ -129,7 +139,20 @@ export default function SecondPage() {
     }
   };
 
-  const navigate = useNavigate();
+  const handleKnowMore = (gameId) => {
+    // For local games with string IDs, we'll search for them
+    // For API games with numeric IDs, we'll navigate directly
+    if (typeof gameId === 'string') {
+      // Search for the game name and navigate to search results
+      const game = [...latestGames, ...topGames, ...survivalGames].find(g => g.id === gameId);
+      if (game) {
+        navigate(`/search?q=${encodeURIComponent(game.name)}`);
+      }
+    } else {
+      // Navigate to game details page
+      navigate(`/game/${gameId}`);
+    }
+  };
 
   // Latest Games data with unique IDs and local images
   const latestGames = [
@@ -229,6 +252,10 @@ export default function SecondPage() {
                 setShowDropdown(true);
               }
             }}
+            aria-label="Search for games"
+            aria-autocomplete="list"
+            aria-controls="search-dropdown"
+            aria-expanded={showDropdown}
           />
 
           <MicButton onTranscript={handleTranscript} />
@@ -236,9 +263,9 @@ export default function SecondPage() {
 
         {/* Search Dropdown */}
         {showDropdown && (
-          <div className={`search-dropdown ${theme}`}>
+          <div className={`search-dropdown ${theme}`} id="search-dropdown" role="listbox">
             {isSearching ? (
-              <div className="dropdown-loading">
+              <div className="dropdown-loading" role="status" aria-live="polite">
                 <span className="loading-spinner">⏳</span>
                 Searching...
               </div>
@@ -248,6 +275,14 @@ export default function SecondPage() {
                   key={game.id}
                   className={`dropdown-item ${theme}`}
                   onClick={() => handleSuggestionClick(game)}
+                  role="option"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleSuggestionClick(game);
+                    }
+                  }}
                 >
                   <img 
                     className="dropdown-item-img" 
@@ -266,7 +301,7 @@ export default function SecondPage() {
                 </div>
               ))
             ) : searchText.trim() && (
-              <div className="dropdown-no-results">No games found</div>
+              <div className="dropdown-no-results" role="status">No games found</div>
             )}
           </div>
         )}
@@ -291,7 +326,7 @@ export default function SecondPage() {
               ))}
             </div>
             <div className="game-card-actions">
-              <a href="#" className="know-more-link">Know more-</a>
+              <button className="know-more-link" onClick={() => handleKnowMore(game.id)}>Know more ?</button>
               <button 
                 className={`wishlist-btn ${isInWishlist(game.id) ? 'in-wishlist' : ''}`}
                 onClick={() => handleWishlistToggle(game)}
@@ -323,7 +358,7 @@ export default function SecondPage() {
               ))}
             </div>
             <div className="game-card-actions">
-              <a href="#" className="know-more-link">Know more-</a>
+              <button className="know-more-link" onClick={() => handleKnowMore(game.id)}>Know more ?</button>
               <button 
                 className={`wishlist-btn ${isInWishlist(game.id) ? 'in-wishlist' : ''}`}
                 onClick={() => handleWishlistToggle(game)}
@@ -355,7 +390,7 @@ export default function SecondPage() {
               ))}
             </div>
             <div className="game-card-actions">
-              <a href="#" className="know-more-link">Know more-</a>
+              <button className="know-more-link" onClick={() => handleKnowMore(game.id)}>Know more ?</button>
               <button 
                 className={`wishlist-btn ${isInWishlist(game.id) ? 'in-wishlist' : ''}`}
                 onClick={() => handleWishlistToggle(game)}
@@ -370,3 +405,4 @@ export default function SecondPage() {
     </div>
   );
 }
+
