@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { validateEmail, validatePassword, sanitizeInput } from '../utils/validation';
 import './LoginForm.css';
 
 export default function LoginForm() {
@@ -7,25 +8,50 @@ export default function LoginForm() {
     email: '',
     password: ''
   });
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prevState => ({
       ...prevState,
-      [name]: value
+      [name]: sanitizeInput(value)
     }));
+    
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!validateEmail(formData.email)) {
+      newErrors.email = 'Please enter a valid email address';
+    }
+    
+    const passwordValidation = validatePassword(formData.password);
+    if (!passwordValidation.isValid) {
+      newErrors.password = passwordValidation.message;
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simple navigation without authentication
-    navigate('/second');
+    
+    if (validateForm()) {
+      // Simple navigation without authentication
+      navigate('/second');
+    }
   };
 
   return (
     <div className="login-container">
-      <button className="back-arrow" onClick={() => navigate('/second')}>
+      <button className="back-arrow" onClick={() => navigate('/second')} aria-label="Go back">
         ←
       </button>
       <div className="login-box">
@@ -35,31 +61,47 @@ export default function LoginForm() {
           </h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="login-form">
+        <form onSubmit={handleSubmit} className="login-form" noValidate>
           <div className="form-group">
-            <label>Email</label>
+            <label htmlFor="email">Email</label>
             <input 
+              id="email"
               type="email" 
               name="email"
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
-              className="login-input"
+              className={`login-input ${errors.email ? 'error' : ''}`}
               required
+              aria-invalid={!!errors.email}
+              aria-describedby={errors.email ? 'email-error' : undefined}
             />
+            {errors.email && (
+              <span id="email-error" className="error-message" role="alert">
+                {errors.email}
+              </span>
+            )}
           </div>
 
           <div className="form-group">
-            <label>Password</label>
+            <label htmlFor="password">Password</label>
             <input 
+              id="password"
               type="password" 
               name="password"
               value={formData.password}
               onChange={handleChange}
               placeholder="Enter your password"
-              className="login-input"
+              className={`login-input ${errors.password ? 'error' : ''}`}
               required
+              aria-invalid={!!errors.password}
+              aria-describedby={errors.password ? 'password-error' : undefined}
             />
+            {errors.password && (
+              <span id="password-error" className="error-message" role="alert">
+                {errors.password}
+              </span>
+            )}
           </div>
 
           <button type="submit" className="login-submit">

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useWishlist } from '../context/WishlistContext';
 import HamburgerNav from '../components/hamburgerNav';
+import { buildRawgUrl } from '../config/api';
 import './SearchResultsPage.css';
 
 const SearchResultsPage = () => {
@@ -15,9 +16,6 @@ const SearchResultsPage = () => {
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const navigate = useNavigate();
 
-  const API_KEY = 'dbb830f2fcc14d9bad3250b12c241e01';
-  const API_BASE_URL = 'https://api.rawg.io/api';
-
   useEffect(() => {
     if (query.trim()) {
       searchGames(query);
@@ -29,9 +27,12 @@ const SearchResultsPage = () => {
   const searchGames = async (searchQuery) => {
     setIsLoading(true);
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/games?key=${API_KEY}&search=${encodeURIComponent(searchQuery)}&page_size=20`
-      );
+      const url = buildRawgUrl('/games', {
+        search: searchQuery,
+        page_size: 20
+      });
+      
+      const response = await fetch(url);
       
       if (!response.ok) {
         throw new Error('Failed to fetch games');
@@ -41,9 +42,10 @@ const SearchResultsPage = () => {
       const processedGames = data.results.map(game => ({
         id: game.id,
         name: game.name,
-        img: game.background_image,
+        img: game.background_image || 'https://via.placeholder.com/300x200?text=No+Image',
         rating: game.rating,
         released: game.released,
+        stars: Math.round(game.rating) || 3,
         platforms: game.platforms?.map(p => p.platform.name) || [],
         genres: game.genres?.map(g => g.name) || []
       }));
@@ -180,12 +182,9 @@ const SearchResultsPage = () => {
                   <div className="search-result-actions">
                     <button 
                       className={`know-more-btn ${theme}`}
-                      onClick={() => {
-                        // Add navigation to game details page when available
-                        alert(`Learn more about ${game.name}`);
-                      }}
+                      onClick={() => navigate(`/game/${game.id}`)}
                     >
-                      Know More
+                      Know More →
                     </button>
                     <button 
                       className={`wishlist-btn ${isInWishlist(game.id) ? 'in-wishlist' : ''}`}

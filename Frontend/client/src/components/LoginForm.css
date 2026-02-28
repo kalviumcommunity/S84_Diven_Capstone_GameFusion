@@ -118,3 +118,30 @@
 .switch-auth:hover {
   color: #764ba2;
 } 
+
+/* Error styling */
+.login-input.error {
+  border-color: #dc3545;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+.form-group {
+  position: relative;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+  .login-box {
+    padding: 30px 20px;
+  }
+  
+  .login-title {
+    font-size: 1.5rem;
+  }
+}
