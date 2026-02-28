@@ -82,10 +82,6 @@ const SearchResultsPage = () => {
     }
   };
 
-  const handleNewSearch = (newQuery) => {
-    navigate(`/search?q=${encodeURIComponent(newQuery)}`);
-  };
-
   return (
     <div className={`search-results-container ${theme}`}>
       <div className={`nav-bar ${theme}`}>
