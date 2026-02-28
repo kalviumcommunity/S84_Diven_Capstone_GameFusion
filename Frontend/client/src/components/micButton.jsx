@@ -6,7 +6,6 @@ const SpeechRecognition =
 
 const MicButton = ({ onTranscript }) => {
   const [isListening, setIsListening] = useState(false);
-  const [error, setError] = useState(null);
   const recognitionRef = useRef(null);
 
   useEffect(() => {
@@ -15,7 +14,7 @@ const MicButton = ({ onTranscript }) => {
       if (recognitionRef.current) {
         try {
           recognitionRef.current.stop();
-        } catch (e) {
+        } catch {
           // Ignore errors during cleanup
         }
       }
@@ -24,7 +23,6 @@ const MicButton = ({ onTranscript }) => {
 
   const handleMicClick = () => {
     if (!SpeechRecognition) {
-      setError("Speech recognition not supported in your browser.");
       alert("Speech recognition not supported in your browser.");
       return;
     }
@@ -45,7 +43,6 @@ const MicButton = ({ onTranscript }) => {
 
       recognitionRef.current.onstart = () => {
         setIsListening(true);
-        setError(null);
       };
 
       recognitionRef.current.onend = () => {
@@ -60,22 +57,13 @@ const MicButton = ({ onTranscript }) => {
       recognitionRef.current.onerror = (event) => {
         console.error("Speech recognition error:", event.error);
         setIsListening(false);
-        
-        if (event.error === 'no-speech') {
-          setError('No speech detected. Please try again.');
-        } else if (event.error === 'not-allowed') {
-          setError('Microphone access denied.');
-        } else {
-          setError('Speech recognition error occurred.');
-        }
       };
     }
 
     try {
       recognitionRef.current.start();
-    } catch (e) {
-      console.error('Error starting recognition:', e);
-      setError('Failed to start speech recognition.');
+    } catch (err) {
+      console.error('Error starting recognition:', err);
     }
   };
 

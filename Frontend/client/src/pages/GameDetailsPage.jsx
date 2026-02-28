@@ -18,6 +18,7 @@ const GameDetailsPage = () => {
 
   useEffect(() => {
     fetchGameDetails();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchGameDetails = async () => {
